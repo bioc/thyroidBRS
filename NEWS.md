@@ -1,3 +1,9 @@
+# thyroidBRS 0.99.8
+
+* README gets the Bioconductor build and years badges and the Zenodo DOI
+  (concept DOI 10.5281/zenodo.23271086), with a Citation section.
+  `inst/CITATION` carries the same DOI. Nothing in the code changed.
+
 # thyroidBRS 0.99.7
 
 * Accepted into Bioconductor (devel) on 2026-10-09. The README now gives the

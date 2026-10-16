@@ -12,7 +12,8 @@ bibentry(
     year     = "2026",
     note     = if (is.null(meta$Version)) "R package" else
                    paste("R package version", meta$Version),
-    url      = "https://github.com/camilasauria/thyroidBRS"
+    url      = "https://github.com/camilasauria/thyroidBRS",
+    doi      = "10.5281/zenodo.23271086"
 )
 
 bibentry(

@@ -2,6 +2,9 @@
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/camilasauria/thyroidBRS/actions/workflows/check.yaml/badge.svg)](https://github.com/camilasauria/thyroidBRS/actions/workflows/check.yaml)
+[![Bioconductor build](https://bioconductor.org/shields/build/devel/bioc/thyroidBRS.svg)](https://bioconductor.org/checkResults/devel/bioc-LATEST/thyroidBRS/)
+[![Bioconductor years](https://bioconductor.org/shields/years-in-bioc/thyroidBRS.svg)](https://bioconductor.org/packages/thyroidBRS)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23271086.svg)](https://doi.org/10.5281/zenodo.23271086)
 <!-- badges: end -->
 
 An R package that computes the **BRAF-RAS Score (BRS)** for papillary
@@ -231,6 +234,14 @@ authors own the output, so the contributed code is redistributable under this
 package's MIT licence.
 
 Assisted-by: Claude Sonnet 5, Claude Opus 5 and Claude Fable 5.1 (Anthropic)
+
+## Citation
+
+To cite the software, use the Zenodo record of the package (concept DOI, which
+always points to the latest version):
+[doi:10.5281/zenodo.23271086](https://doi.org/10.5281/zenodo.23271086). The
+study that defined the score is Agrawal et al. (2014), linked above. Run
+`citation("thyroidBRS")` in R for both entries.
 
 ## License
 
