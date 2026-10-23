@@ -38,10 +38,10 @@
 #' @section Alias resolution:
 #' Five labels in the 2014 figure are not approved HGNC symbols today. Four
 #' are former symbols: `FAM176A` (now `EVA1A`), `PVRL4` (`NECTIN4`), `TM7SF4`
-#' (`DCSTAMP`) and `ARNTL` (`BMAL1`). Expression matrices built from current GENCODE/HGNC
-#' annotation use the new symbols, so matching on `original_symbol` silently
-#' loses those genes. Use `current_symbol`, which is what [brs_fit()] does by
-#' default.
+#' (`DCSTAMP`) and `ARNTL` (`BMAL1`). Expression matrices built from current
+#' GENCODE/HGNC annotation use the new symbols, so matching on
+#' `original_symbol` silently loses those genes. Use `current_symbol`, which
+#' is what [brs_fit()] does by default.
 #'
 #' `FLJ23867` is neither a symbol nor an alias in `org.Hs.eg.db`, HGNC or
 #' GENCODE. It is a cDNA clone name: NCBI Gene record 200058

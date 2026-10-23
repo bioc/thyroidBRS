@@ -49,10 +49,10 @@ repository rather than the installed package:
 
 Five labels in the 2014 figure are not approved HGNC symbols today. Four
 are former symbols: \code{FAM176A} (now \code{EVA1A}), \code{PVRL4} (\code{NECTIN4}), \code{TM7SF4}
-(\code{DCSTAMP}) and \code{ARNTL} (\code{BMAL1}). Expression matrices built from current GENCODE/HGNC
-annotation use the new symbols, so matching on \code{original_symbol} silently
-loses those genes. Use \code{current_symbol}, which is what \code{\link[=brs_fit]{brs_fit()}} does by
-default.
+(\code{DCSTAMP}) and \code{ARNTL} (\code{BMAL1}). Expression matrices built from current
+GENCODE/HGNC annotation use the new symbols, so matching on
+\code{original_symbol} silently loses those genes. Use \code{current_symbol}, which
+is what \code{\link[=brs_fit]{brs_fit()}} does by default.
 
 \code{FLJ23867} is neither a symbol nor an alias in \code{org.Hs.eg.db}, HGNC or
 GENCODE. It is a cDNA clone name: NCBI Gene record 200058
