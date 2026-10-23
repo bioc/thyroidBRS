@@ -1,7 +1,7 @@
 script: derive_signature
-run on: 2026-10-08 00:34:04 CST
-commit: a73fefd
-thyroidBRS: 0.99.6
+run on: 2026-10-23 13:47:58 CST
+commit: f897ffb
+thyroidBRS: 0.99.9
 THCA_COUNTS=derive_input.rds
 BRS_CORES=15
 BRS_UNIVERSE=coding
@@ -28,7 +28,7 @@ attached base packages:
 [8] base     
 
 other attached packages:
-[1] thyroidBRS_0.99.6 edgeR_4.8.2       limma_3.66.0     
+[1] thyroidBRS_0.99.9 edgeR_4.8.2       limma_3.66.0     
 
 loaded via a namespace (and not attached):
  [1] SparseArray_1.10.9          Matrix_1.7-4               
