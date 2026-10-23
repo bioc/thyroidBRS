@@ -24,8 +24,8 @@
 ## Following an earlier version of this header, which described a different
 ## structure, left `groups` NULL and the script failed on the first draw.
 
-## Assisted-by: Claude Opus 5 and Claude Fable 5.1 (Anthropic). See the
-## Provenance section of README.md.
+## Assisted-by: Claude Opus 5, Claude Fable 5.1 and Claude Opus 5.5
+## (Anthropic). See the Provenance section of README.md.
 
 suppressPackageStartupMessages({
     library(edgeR)
@@ -119,8 +119,8 @@ run <- function(n_per_group, label) {
 ## ones that never appear as 0. These are the figures quoted in
 ## signature_rederivation.md.
 consistency_summary <- function(freq, published) {
-    ## "Usable" means present in the matrix: FLJ23867 is in the published
-    ## list but in no current annotation, so it cannot be selected at all.
+    ## "Usable" means present in the matrix. All 71 are once FLJ23867 is
+    ## read as QSOX1; the filter stays for matrices that lack a gene.
     published <- published[published %in% rownames(counts)]
     f <- setNames(as.numeric(freq[published]), published)
     f[is.na(f)] <- 0

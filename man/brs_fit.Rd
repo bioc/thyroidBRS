@@ -35,8 +35,7 @@ exactly like a cohort that has unlabeled samples. Each reference group
 needs at least two samples; fewer is an error.}
 
 \item{genes}{Character vector of gene symbols to use as the signature.
-Defaults to the alias-resolved names in \link{brs_genes} (70 genes; \code{FLJ23867}
-has no current symbol and is excluded).}
+Defaults to the alias-resolved names in \link{brs_genes} (71 genes).}
 
 \item{log2_transform}{Logical. If \code{TRUE}, applies \code{log2(expr + 1)} to \code{expr}
 before fitting (use this if you are passing raw TPM/counts instead of
@@ -103,7 +102,7 @@ restricted to \code{BRAF_V600E} and \code{RAS}) to fit, and keep \code{BRAF_RAF_
 
 \examples{
 set.seed(1)
-genes <- na.omit(brs_genes$current_symbol)[1:10]
+genes <- head(brs_genes$current_symbol, 10)
 samples <- paste0("S", 1:20)
 group <- rep(c("BRAF_V600E", "RAS"), each = 10)
 

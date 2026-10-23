@@ -9,12 +9,10 @@ A data frame with 71 rows and 4 columns:
 \describe{
 \item{original_symbol}{Gene symbol exactly as it appears in the 2014
 publication's Figure S7A.}
-\item{current_symbol}{Current HGNC-approved symbol, resolved against
-\code{org.Hs.eg.db}. Identical to \code{original_symbol} for genes whose symbol
-has not changed. \code{NA} for \code{FLJ23867}, which does not map to any symbol
-or alias in current annotation and should be treated as permanently
-missing from the signature. \code{\link[=brs_fit]{brs_fit()}} and \code{\link[=predict.brs_fit]{predict.brs_fit()}}
-drop it.}
+\item{current_symbol}{Current HGNC-approved symbol. Identical to
+\code{original_symbol} for genes whose symbol has not changed. Four were
+resolved against \code{org.Hs.eg.db}; \code{FLJ23867}, a cDNA clone name, was
+resolved from NCBI Gene to \code{QSOX1}. See the Alias resolution section.}
 \item{block}{Which of the two row-clusters of Figure S7A the gene belongs
 to: \code{1} for the 13-gene block, \code{2} for the 58-gene block. Each block is
 listed alphabetically in the figure, which is what makes the
@@ -22,7 +20,7 @@ transcription checkable: no gene is out of order within its block.}
 \item{up_in}{Which reference group the gene is higher in, \code{"RAS"} for
 block 1 and \code{"BRAF"} for block 2. Refitting the centroids on TCGA-THCA
 recovers this split exactly: all 13 block-1 genes have a higher RAS
-centroid and all 57 usable block-2 genes a higher BRAF centroid, with
+centroid and all 58 block-2 genes a higher BRAF centroid, with
 no exceptions. That is an independent check on the gene list: a
 mis-transcribed symbol would land in the wrong block.}
 }
@@ -49,12 +47,25 @@ repository rather than the installed package:
 }
 \section{Alias resolution}{
 
-Four symbols in the 2014 figure are no longer the approved HGNC symbol:
-\code{FAM176A} (now \code{EVA1A}), \code{PVRL4} (\code{NECTIN4}), \code{TM7SF4} (\code{DCSTAMP}) and
-\code{ARNTL} (\code{BMAL1}). Expression matrices built from current GENCODE/HGNC
-annotation use the new symbols, so matching on \code{original_symbol} silently
-loses those genes. Use \code{current_symbol}, which is what \code{\link[=brs_fit]{brs_fit()}} does by
-default. Resolution was checked against \code{org.Hs.eg.db}; re-run
+Five labels in the 2014 figure are not approved HGNC symbols today. Four
+are former symbols: \code{FAM176A} (now \code{EVA1A}), \code{PVRL4} (\code{NECTIN4}), \code{TM7SF4}
+(\code{DCSTAMP}) and \code{ARNTL} (\code{BMAL1}). Expression matrices built from current
+GENCODE/HGNC annotation use the new symbols, so matching on
+\code{original_symbol} silently loses those genes. Use \code{current_symbol}, which
+is what \code{\link[=brs_fit]{brs_fit()}} does by default.
+
+\code{FLJ23867} is neither a symbol nor an alias in \code{org.Hs.eg.db}, HGNC or
+GENCODE. It is a cDNA clone name: NCBI Gene record 200058
+("uncharacterized protein FLJ23867", 1q25.2) was withdrawn and merged into
+5768, \code{QSOX1} (quiescin sulfhydryl oxidase 1), whose record lists
+FLJ23867 among its clone names. The merge dates from 2018, so in 2014
+FLJ23867 was a Gene ID of its own and the published row may have measured
+a transcript at that locus rather than the whole of \code{QSOX1}. \code{QSOX1} is
+therefore the closest current gene, not necessarily the same feature. In
+TCGA-THCA it is higher in BRAF-V600E than in RAS tumors and tracks the
+rest of block 2.
+
+Resolution was checked against \code{org.Hs.eg.db}; re-run
 \code{data-raw/check_symbols.R} when the annotation is updated. \verb{data-raw/} is
 not shipped in the installed package; it lives in the package repository,
 \url{https://github.com/camilasauria/thyroidBRS}.
@@ -62,8 +73,8 @@ not shipped in the installed package; it lives in the package repository,
 
 \examples{
 brs_genes
-# Genes actually usable today (alias-resolved, FLJ23867 excluded):
-na.omit(brs_genes$current_symbol)
+# Signature genes under current symbols:
+brs_genes$current_symbol
 # The two blocks of Figure S7A:
 table(brs_genes$block)
 

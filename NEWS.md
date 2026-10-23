@@ -1,3 +1,45 @@
+# thyroidBRS 0.99.9
+
+* `FLJ23867` now resolves to `QSOX1`, and the classifier uses all 71 genes of
+  the published signature instead of 70. `FLJ23867` is a cDNA clone name, not
+  a symbol or alias, so `org.Hs.eg.db` never returned it: its NCBI Gene record
+  (200058) was withdrawn in 2018 and merged into `QSOX1` (5768), whose record
+  lists it among its clone names. `brs_genes$current_symbol` has no `NA` left,
+  and `data-raw/check_symbols.R` records the merge and checks that 5768 is
+  still `QSOX1`.
+* In 2014 FLJ23867 was still a Gene ID of its own, so `QSOX1` is the closest
+  current gene rather than necessarily the same feature. It behaves like the
+  rest of its block, which `data-raw/validate_tcga.R` now prints: higher in
+  BRAF-V600E than in RAS tumors (log2 difference 1.41; other block-2 genes
+  0.56 to 6.68) and Spearman 0.705 with the axis built from the other
+  signature genes (other block-2 genes 0.43 to 0.88, median 0.697). On
+  GSE33630 it loads on PC1 with its block's sign. The re-derivation selects
+  it in a top 100 in 42.5% of iterations, 100th of 262 genes; 14 published
+  genes are selected less often.
+* A `brs_fit` saved with an earlier version keeps its 70 genes and still
+  predicts. Refit it to use 71.
+* Figures that move, all reproduced by the `data-raw/` scripts:
+  - TCGA-THCA (`validate_tcga.R`): Spearman against the published score
+    0.940 (was 0.941); class concordance 98.7% on all 391 published samples
+    (was 99.0%) and 95.5% on the 111 held out of the fit (was 96.4%);
+    10-fold CV unchanged at 99.7%. One tumor changes class, TCGA-ET-A4KN,
+    the one closest to zero of all 505 (score -0.006 before, +0.005 now).
+    Removing any single gene from the 71 moves concordance by at most one
+    sample, either way, so this is within that range. Scores with 70 and 71
+    genes correlate at 0.99997. `data-raw/expected/preds_tcga.csv` is
+    rewritten.
+  - `portability.R`: resubstitution floor on noise about 69% (was 68%);
+    circular and mutation-defined fits disagree on 4 of 505 tumors (was 2);
+    class-mix table, reference standardization, 98.7% on all published (was
+    99.0%) and 99.3% on Braf-like only (was 99.6%), cohort standardization
+    97.7% on all published (was 97.4%). GSE33630: PC1 46.1% (was 46.2%), 69
+    of 71 genes load with their block's sign (was 68 of 70), within-block-2
+    correlation +0.418 (was +0.419), Spearman against PC1 0.982 and 0.918
+    for cohort and rank standardization (was 0.981 and 0.917).
+  - `derive_signature.R`: 69 of the 71 published genes ever reach a top 100
+    (was 68 of 70); median selection frequency 92.5% and 97.0% (was 93.5%
+    and 97.2%); overlap p-values in `signature_rederivation.md` recomputed.
+
 # thyroidBRS 0.99.8
 
 * README gets the Bioconductor build and years badges and the Zenodo DOI

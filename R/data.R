@@ -2,7 +2,7 @@
 # (Anthropic) working from the published description of the method, under the
 # direction of and reviewed by the package authors, who are responsible for
 # its correctness and maintenance. See the Provenance section of README.md.
-# Assisted-by: Claude Opus 5 (Anthropic)
+# Assisted-by: Claude Opus 5 and Claude Opus 5.5 (Anthropic)
 
 #' BRAF-RAS Score (BRS) signature genes
 #'
@@ -19,12 +19,10 @@
 #' \describe{
 #'   \item{original_symbol}{Gene symbol exactly as it appears in the 2014
 #'     publication's Figure S7A.}
-#'   \item{current_symbol}{Current HGNC-approved symbol, resolved against
-#'     `org.Hs.eg.db`. Identical to `original_symbol` for genes whose symbol
-#'     has not changed. `NA` for `FLJ23867`, which does not map to any symbol
-#'     or alias in current annotation and should be treated as permanently
-#'     missing from the signature. [brs_fit()] and [predict.brs_fit()]
-#'     drop it.}
+#'   \item{current_symbol}{Current HGNC-approved symbol. Identical to
+#'     `original_symbol` for genes whose symbol has not changed. Four were
+#'     resolved against `org.Hs.eg.db`; `FLJ23867`, a cDNA clone name, was
+#'     resolved from NCBI Gene to `QSOX1`. See the Alias resolution section.}
 #'   \item{block}{Which of the two row-clusters of Figure S7A the gene belongs
 #'     to: `1` for the 13-gene block, `2` for the 58-gene block. Each block is
 #'     listed alphabetically in the figure, which is what makes the
@@ -32,18 +30,31 @@
 #'   \item{up_in}{Which reference group the gene is higher in, `"RAS"` for
 #'     block 1 and `"BRAF"` for block 2. Refitting the centroids on TCGA-THCA
 #'     recovers this split exactly: all 13 block-1 genes have a higher RAS
-#'     centroid and all 57 usable block-2 genes a higher BRAF centroid, with
+#'     centroid and all 58 block-2 genes a higher BRAF centroid, with
 #'     no exceptions. That is an independent check on the gene list: a
 #'     mis-transcribed symbol would land in the wrong block.}
 #' }
 #'
 #' @section Alias resolution:
-#' Four symbols in the 2014 figure are no longer the approved HGNC symbol:
-#' `FAM176A` (now `EVA1A`), `PVRL4` (`NECTIN4`), `TM7SF4` (`DCSTAMP`) and
-#' `ARNTL` (`BMAL1`). Expression matrices built from current GENCODE/HGNC
-#' annotation use the new symbols, so matching on `original_symbol` silently
-#' loses those genes. Use `current_symbol`, which is what [brs_fit()] does by
-#' default. Resolution was checked against `org.Hs.eg.db`; re-run
+#' Five labels in the 2014 figure are not approved HGNC symbols today. Four
+#' are former symbols: `FAM176A` (now `EVA1A`), `PVRL4` (`NECTIN4`), `TM7SF4`
+#' (`DCSTAMP`) and `ARNTL` (`BMAL1`). Expression matrices built from current
+#' GENCODE/HGNC annotation use the new symbols, so matching on
+#' `original_symbol` silently loses those genes. Use `current_symbol`, which
+#' is what [brs_fit()] does by default.
+#'
+#' `FLJ23867` is neither a symbol nor an alias in `org.Hs.eg.db`, HGNC or
+#' GENCODE. It is a cDNA clone name: NCBI Gene record 200058
+#' ("uncharacterized protein FLJ23867", 1q25.2) was withdrawn and merged into
+#' 5768, `QSOX1` (quiescin sulfhydryl oxidase 1), whose record lists
+#' FLJ23867 among its clone names. The merge dates from 2018, so in 2014
+#' FLJ23867 was a Gene ID of its own and the published row may have measured
+#' a transcript at that locus rather than the whole of `QSOX1`. `QSOX1` is
+#' therefore the closest current gene, not necessarily the same feature. In
+#' TCGA-THCA it is higher in BRAF-V600E than in RAS tumors and tracks the
+#' rest of block 2.
+#'
+#' Resolution was checked against `org.Hs.eg.db`; re-run
 #' `data-raw/check_symbols.R` when the annotation is updated. `data-raw/` is
 #' not shipped in the installed package; it lives in the package repository,
 #' <https://github.com/camilasauria/thyroidBRS>.
@@ -56,8 +67,8 @@
 #'
 #' @examples
 #' brs_genes
-#' # Genes actually usable today (alias-resolved, FLJ23867 excluded):
-#' na.omit(brs_genes$current_symbol)
+#' # Signature genes under current symbols:
+#' brs_genes$current_symbol
 #' # The two blocks of Figure S7A:
 #' table(brs_genes$block)
 #'
@@ -87,21 +98,16 @@ brs_genes <- data.frame(
     ARNTL = "BMAL1",
     FAM176A = "EVA1A",
     PVRL4 = "NECTIN4",
-    TM7SF4 = "DCSTAMP"
+    TM7SF4 = "DCSTAMP",
+    # Clone name, not an alias: NCBI Gene 200058 merged into 5768 (QSOX1).
+    FLJ23867 = "QSOX1"
 )
-
-# FLJ23867 resolves to no current symbol or alias, so it is marked NA and
-# brs_fit() drops it from the signature rather than looking for it in vain.
-.brs_unresolved <- "FLJ23867"
 
 brs_genes$current_symbol <- ifelse(
     brs_genes$original_symbol %in% names(.brs_alias_to_current),
     .brs_alias_to_current[brs_genes$original_symbol],
     brs_genes$original_symbol
 )
-brs_genes$current_symbol[
-    brs_genes$original_symbol %in% .brs_unresolved
-] <- NA_character_
 
 brs_genes <- brs_genes[, c(
     "original_symbol", "current_symbol", "block",

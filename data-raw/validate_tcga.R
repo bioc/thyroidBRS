@@ -15,8 +15,8 @@
 ## kept per patient both move the figures below, and build_inputs.R is where
 ## those decisions are written down.
 
-## Assisted-by: Claude Opus 5 and Claude Fable 5.1 (Anthropic). See the
-## Provenance section of README.md.
+## Assisted-by: Claude Opus 5, Claude Fable 5.1 and Claude Opus 5.5
+## (Anthropic). See the Provenance section of README.md.
 
 library(thyroidBRS)
 
@@ -97,5 +97,35 @@ expected <- key[names(delta)]
 cat("\nOrientation matches Figure S7A for ",
     sum(ifelse(delta > 0, "RAS", "BRAF") == expected), " of ", length(delta),
     " genes\n", sep = "")
+
+## ---- FLJ23867 as QSOX1 -------------------------------------------------
+## FLJ23867 is a clone name whose NCBI Gene record was merged into QSOX1 in
+## 2018, so in 2014 it was a separate Gene ID. Check that QSOX1 behaves like
+## the rest of its block: BRAF-RAS difference on the reference groups, and
+## Spearman correlation with the axis built from the other signature genes
+## (block 2 minus block 1 of per-gene z-scores, the gene itself left out).
+sig <- fit$genes_used
+blk <- setNames(brs_genes$block, brs_genes$current_symbol)
+blk <- c(blk, setNames(brs_genes$block, brs_genes$original_symbol))[sig]
+z <- t(scale(t(expr[sig, ])))
+b1 <- sig[blk == 1L]
+b2 <- sig[blk == 2L]
+rho_b2 <- vapply(b2, function(g) {
+    axis <- colMeans(z[setdiff(b2, g), ]) - colMeans(z[b1, ])
+    cor(z[g, ], axis, method = "spearman")
+}, numeric(1))
+lfc_b2 <- vapply(b2, function(g) {
+    mean(expr[g, names(mut)[mut == "BRAF_V600E"]]) -
+        mean(expr[g, names(mut)[mut == "RAS"]])
+}, numeric(1))
+others <- setdiff(b2, "QSOX1")
+cat("\nQSOX1 (published as FLJ23867) against the other ", length(others),
+    " block-2 genes\n", sep = "")
+cat("  log2 BRAF - RAS : ", round(lfc_b2[["QSOX1"]], 2), " (others ",
+    paste(round(range(lfc_b2[others]), 2), collapse = " to "), ", median ",
+    round(median(lfc_b2[others]), 2), ")\n", sep = "")
+cat("  Spearman vs axis: ", round(rho_b2[["QSOX1"]], 3), " (others ",
+    paste(round(range(rho_b2[others]), 2), collapse = " to "), ", median ",
+    round(median(rho_b2[others]), 3), ")\n", sep = "")
 
 record_session("validate_tcga")

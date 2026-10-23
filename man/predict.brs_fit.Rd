@@ -74,7 +74,7 @@ own signature axis, and they disagree completely on where zero falls.
 \code{"cohort"} and \code{"rank"} fix the threshold across platforms by paying for
 it elsewhere: each sample's score then depends on which samples it is
 scored with. Scoring TCGA subsets of different composition against the
-same centroids, \code{"reference"} gets 97.5\% to 99.6\% right whatever the class
+same centroids, \code{"reference"} gets 97.5\% to 99.5\% right whatever the class
 mix, while \code{"cohort"} drops to 8.4\% on a cohort that happens to be all
 RAS-like.
 
@@ -115,7 +115,7 @@ the same axis as the published figures.
 
 \examples{
 set.seed(1)
-genes <- na.omit(brs_genes$current_symbol)[1:10]
+genes <- head(brs_genes$current_symbol, 10)
 samples <- paste0("S", 1:20)
 group <- rep(c("BRAF_V600E", "RAS"), each = 10)
 
