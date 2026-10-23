@@ -17,7 +17,7 @@ q < 0.01, top 100 by significance, genes that rank there consistently.
 | Reference groups | 234 BRAF-V600E, 52 RAS (driver mutation) |
 | Gene universe | 23,339 after `filterByExpr` |
 | Design | 52 vs 52 per iteration, 200 iterations |
-| Published genes in the universe | 70 of 71 (`FLJ23867` does not exist in current annotation) |
+| Published genes in the universe | 71 of 71 (`FLJ23867` as `QSOX1`, the gene its NCBI record was merged into) |
 
 The 2014 run used the TCGA RSEM gene model, roughly 20.5k mostly
 protein-coding genes. Current STAR counts add ~16k lncRNAs and pseudogenes
@@ -27,26 +27,31 @@ full universe and a protein-coding-restricted one.
 ## The published genes dominate the consistency ranking
 
 Across 200 iterations only **262 of the 23,339 genes** ever enter a top 100,
-and **68 of the 70 usable published genes are among them** — all within the
+and **69 of the 71 published genes are among them** — all within the
 top 200 of the consistency ranking. The median selection frequency over the
-70 usable published genes, counting the two that never appear as 0, is
-93.5%. On the coding universe the same holds with 257 genes and a median
-frequency of 97.2%. (`derive_signature.R` prints these three figures after
+71 published genes, counting the two that never appear as 0, is
+92.5%. On the coding universe the same holds with 257 genes and a median
+frequency of 97.0%. (`derive_signature.R` prints these three figures after
 the "Top-100-always" comparison.)
 
 Taking the 71 most consistent genes:
 
 | Universe | Published in the top 71 | p (whole universe) | p (conditioned on genes that ever appeared) |
 | --- | --- | --- | --- |
-| All 23,339 | 50 | 1.1e-119 | 5.6e-22 |
-| Coding 16,044 | 59 | 3.3e-143 | 4.5e-36 |
+| All 23,339 | 50 | 3.7e-119 | 1.8e-21 |
+| Coding 16,044 | 59 | 1.9e-142 | 2.9e-35 |
 
-The last column is the conservative test: even restricted to the ~260 genes
+Both are the upper tail of the hypergeometric distribution: 71 draws from
+the universe (or from the genes that ever reached a top 100), with the 71
+published genes (or the 69 of them among those) as successes. The last
+column is the conservative test: even restricted to the ~260 genes
 differentially expressed enough to reach a top 100 at all, the published list
 is recovered far beyond chance.
 
-Three published genes never reach a top 100: `ANXA2P2`, `ASAP2` and
-`FLJ23867` (the last is absent from the matrix entirely).
+Two published genes never reach a top 100: `ANXA2P2` and `ASAP2`.
+`QSOX1` (published as `FLJ23867`) reaches it in 42.5% of iterations, 100th
+of the 262; 12 other published genes reach it less often, and those two
+never.
 
 ## The strict reading is precise but narrow
 

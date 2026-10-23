@@ -1,8 +1,8 @@
 ## Reproduces the numbers quoted in microarray_notes.md and in the
 ## `standardize` documentation, which were measured but had no script:
 ##
-##   - the resubstitution floor on pure noise (~68%)
-##   - the circular vs. mutation-defined fit (axes at 0.998, 2 of 505)
+##   - the resubstitution floor on pure noise (~69%)
+##   - the circular vs. mutation-defined fit (axes at 0.998, 4 of 505)
 ##   - the signature's structure on an Affymetrix cohort
 ##   - the three standardizations against the array's own axis
 ##   - the class-mix robustness table
@@ -15,8 +15,8 @@
 ##            matrix of the PTC samples, gene symbols x GSM id.
 ## Either may be omitted; the sections that need it are then skipped.
 
-## Assisted-by: Claude Opus 5 and Claude Fable 5.1 (Anthropic). See the
-## Provenance section of README.md.
+## Assisted-by: Claude Opus 5, Claude Fable 5.1 and Claude Opus 5.5
+## (Anthropic). See the Provenance section of README.md.
 
 library(thyroidBRS)
 
@@ -27,12 +27,12 @@ ref <- read.csv(
 rownames(ref) <- ref$patient
 
 ## ---- 1. What resubstitution gives on data with no signal ---------------
-message("\n1. Resubstitution floor, 70 genes, 391 samples split 272/119")
+message("\n1. Resubstitution floor, 71 genes, 391 samples split 272/119")
 set.seed(1)
 floor_pct <- replicate(20, {
-    genes <- paste0("G", 1:70)
+    genes <- paste0("G", 1:71)
     samples <- paste0("S", 1:391)
-    expr <- matrix(rnorm(70 * 391), 70, 391,
+    expr <- matrix(rnorm(71 * 391), 71, 391,
                    dimnames = list(genes, samples))
     labels <- setNames(rep(c("BRAF_V600E", "RAS"), c(272, 119)), samples)
     preds <- brs_score(expr, labels, genes = genes)

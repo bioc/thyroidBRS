@@ -32,9 +32,9 @@ Compares \code{\link[=predict.brs_fit]{predict.brs_fit()}} output against a refe
 
 Passing the same \code{labels} that were used to fit the centroids measures how
 well a nearest-centroid rule reproduces the labels that \emph{defined} those
-centroids. That statistic is strongly optimistic: on 70 genes and 391
+centroids. That statistic is strongly optimistic: on 71 genes and 391
 samples split 272/119, pure noise with no signal at all still resubstitutes
-at about 68\%. Pass \code{fit} and this function will tell you how much of the
+at about 69\%. Pass \code{fit} and this function will tell you how much of the
 comparison is resubstitution, and warn when all of it is.
 
 For a real check, compare against labels that did not enter the fit.
@@ -44,7 +44,7 @@ published \code{BRAF_RAF_class} and \code{BRAF_RAF_score}.
 
 \examples{
 set.seed(1)
-genes <- na.omit(brs_genes$current_symbol)[1:10]
+genes <- head(brs_genes$current_symbol, 10)
 samples <- paste0("S", 1:20)
 group <- rep(c("BRAF_V600E", "RAS"), each = 10)
 

@@ -2,7 +2,7 @@
 # (Anthropic) working from the published description of the method, under the
 # direction of and reviewed by the package authors, who are responsible for
 # its correctness and maintenance. See the Provenance section of README.md.
-# Assisted-by: Claude Opus 5 and Claude Fable 5.1 (Anthropic)
+# Assisted-by: Claude Opus 5, Claude Fable 5.1 and Claude Opus 5.5 (Anthropic)
 
 #' Fit BRAF-RAS Score (BRS) reference centroids
 #'
@@ -51,8 +51,7 @@
 #'   exactly like a cohort that has unlabeled samples. Each reference group
 #'   needs at least two samples; fewer is an error.
 #' @param genes Character vector of gene symbols to use as the signature.
-#'   Defaults to the alias-resolved names in [brs_genes] (70 genes; `FLJ23867`
-#'   has no current symbol and is excluded).
+#'   Defaults to the alias-resolved names in [brs_genes] (71 genes).
 #' @param log2_transform Logical. If `TRUE`, applies `log2(expr + 1)` to `expr`
 #'   before fitting (use this if you are passing raw TPM/counts instead of
 #'   already-transformed values). The choice is stored in the returned object
@@ -95,7 +94,7 @@
 #'
 #' @examples
 #' set.seed(1)
-#' genes <- na.omit(brs_genes$current_symbol)[1:10]
+#' genes <- head(brs_genes$current_symbol, 10)
 #' samples <- paste0("S", 1:20)
 #' group <- rep(c("BRAF_V600E", "RAS"), each = 10)
 #'
@@ -246,7 +245,7 @@ brs_fit <- function(expr, labels, genes = NULL, log2_transform = FALSE,
 #' `"cohort"` and `"rank"` fix the threshold across platforms by paying for
 #' it elsewhere: each sample's score then depends on which samples it is
 #' scored with. Scoring TCGA subsets of different composition against the
-#' same centroids, `"reference"` gets 97.5% to 99.6% right whatever the class
+#' same centroids, `"reference"` gets 97.5% to 99.5% right whatever the class
 #' mix, while `"cohort"` drops to 8.4% on a cohort that happens to be all
 #' RAS-like.
 #'
@@ -314,7 +313,7 @@ brs_fit <- function(expr, labels, genes = NULL, log2_transform = FALSE,
 #'
 #' @examples
 #' set.seed(1)
-#' genes <- na.omit(brs_genes$current_symbol)[1:10]
+#' genes <- head(brs_genes$current_symbol, 10)
 #' samples <- paste0("S", 1:20)
 #' group <- rep(c("BRAF_V600E", "RAS"), each = 10)
 #'
@@ -402,7 +401,7 @@ predict.brs_fit <- function(object, newdata, log2_transform = NULL,
 #'
 #' @examples
 #' set.seed(1)
-#' genes <- na.omit(brs_genes$current_symbol)[1:10]
+#' genes <- head(brs_genes$current_symbol, 10)
 #' samples <- paste0("S", 1:20)
 #' group <- rep(c("BRAF_V600E", "RAS"), each = 10)
 #'
@@ -445,9 +444,9 @@ brs_score <- function(expr, labels, newdata = expr, genes = NULL,
 #' @section Resubstitution is not validation:
 #' Passing the same `labels` that were used to fit the centroids measures how
 #' well a nearest-centroid rule reproduces the labels that *defined* those
-#' centroids. That statistic is strongly optimistic: on 70 genes and 391
+#' centroids. That statistic is strongly optimistic: on 71 genes and 391
 #' samples split 272/119, pure noise with no signal at all still resubstitutes
-#' at about 68%. Pass `fit` and this function will tell you how much of the
+#' at about 69%. Pass `fit` and this function will tell you how much of the
 #' comparison is resubstitution, and warn when all of it is.
 #'
 #' For a real check, compare against labels that did not enter the fit.
@@ -471,7 +470,7 @@ brs_score <- function(expr, labels, newdata = expr, genes = NULL,
 #'
 #' @examples
 #' set.seed(1)
-#' genes <- na.omit(brs_genes$current_symbol)[1:10]
+#' genes <- head(brs_genes$current_symbol, 10)
 #' samples <- paste0("S", 1:20)
 #' group <- rep(c("BRAF_V600E", "RAS"), each = 10)
 #'

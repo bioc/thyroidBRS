@@ -103,9 +103,9 @@ reproduces the published *classification*:
 
 - against driver-mutation status, which is what the reference groups are
   defined by, 10-fold cross-validation gives **99.7%**;
-- against the published class labels, **96.4%** on samples held out of the
+- against the published class labels, **95.5%** on samples held out of the
   fit;
-- against the published continuous score, **Spearman 0.941** — close, but not
+- against the published continuous score, **Spearman 0.940** — close, but not
   identical.
 
 That last number is the point. Expression pipelines have moved (RSEM on hg19
@@ -120,10 +120,10 @@ RAS-mutant tumors, then scoring all 505 primary tumors available today:
 
 | Comparison | Result |
 | --- | --- |
-| Spearman vs. published `BRAF_RAF_score` (n = 391) | 0.941 |
+| Spearman vs. published `BRAF_RAF_score` (n = 391) | 0.940 |
 | Pearson, rescaled to [-1, 1] (n = 391) | 0.986 [^1] |
-| Class concordance, samples **held out** of the fit (n = 111) | 96.4% |
-| Class concordance, all 391 published samples | 99.0% |
+| Class concordance, samples **held out** of the fit (n = 111) | 95.5% |
+| Class concordance, all 391 published samples | 98.7% |
 | 10-fold CV against mutation status (n = 286) | 99.7% |
 | Patients scored | 505, of which 114 have no published BRS |
 
@@ -136,7 +136,7 @@ not move: those 71 genes were selected on these same TCGA BRAF/RAS tumors in
 optimistic in exactly the way this package criticizes resubstitution for
 being. Treat it as an upper bound.
 
-The 96.4% is the cleanest number here. Those 111 tumors are neither
+The 95.5% is the cleanest number here. Those 111 tumors are neither
 BRAF-V600E- nor RAS-mutant, so they entered neither the signature derivation
 nor the centroid fit — 58 carry a fusion driver, 10 another driver mutation,
 and 43 no identified driver at all. All 111 were exome sequenced. (Of the
@@ -147,8 +147,8 @@ classifier rather than with a biological truth.
 
 Concordance on the samples that *defined* the centroids is resubstitution and
 carries a large optimistic bias: at the dimensions of the published
-comparison (70 genes, 391 samples split 272/119), pure noise with no signal
-at all still resubstitutes at about 68%. `validate_brs()` reports how much of
+comparison (71 genes, 391 samples split 272/119), pure noise with no signal
+at all still resubstitutes at about 69%. `validate_brs()` reports how much of
 any comparison is resubstitution, and warns when all of it is.
 
 A genuinely independent estimate needs a cohort that played no part in
@@ -177,24 +177,25 @@ Four checks back the transcription:
   58 genes — and neither has a gene out of order, so an omission or a misread
   would show up. `13 + 58 = 71` matches the figure legend.
 - Refitting the centroids on TCGA-THCA recovers the block structure exactly:
-  all 13 block-1 genes are higher in the RAS group and all 57 usable block-2
-  genes higher in the BRAF group, 70 of 70 with no exceptions.
+  all 13 block-1 genes are higher in the RAS group and all 58 block-2 genes
+  higher in the BRAF group, 71 of 71 with no exceptions.
 - Symbols were resolved against `org.Hs.eg.db`. Four are stale in the 2014
   figure (`ARNTL` → `BMAL1`, `PVRL4` → `NECTIN4`, `FAM176A` → `EVA1A`,
-  `TM7SF4` → `DCSTAMP`) and `FLJ23867` maps to nothing in current annotation,
-  so the classifier uses 70 genes.
+  `TM7SF4` → `DCSTAMP`). `FLJ23867` is a cDNA clone name, not a symbol or
+  alias: its NCBI Gene record (200058) was merged into `QSOX1` (5768), which
+  is what the classifier uses. All 71 genes are used.
 - Re-running the derivation itself
   ([`data-raw/derive_signature.R`](https://github.com/camilasauria/thyroidBRS/blob/main/data-raw/derive_signature.R))
   puts the
   published genes at the top of the ranking: over 200 limma-voom iterations
-  only ~260 genes ever reach a top 100, and 68 of the 70 usable published
-  genes are among them, at a median selection frequency of 93-97%. On a
+  only ~260 genes ever reach a top 100, and 69 of the 71 published genes
+  are among them, at a median selection frequency of 92.5-97%. On a
   2014-like gene universe the paper's strict criterion keeps 27 genes, 26 of
   them published.
 
 `brs_fit()` resolves each gene against whichever spelling your matrix actually
 uses, so GENCODE v36 matrices (`ARNTL`, `PVRL4`) and current ones (`BMAL1`,
-`NECTIN4`) both give the full 70.
+`NECTIN4`) both give the full 71.
 
 What the re-derivation does *not* reproduce is the count of exactly 71, which
 depends on choices the paper leaves unspecified. See
@@ -209,8 +210,9 @@ Substantial parts of this package were written by Claude models (Anthropic),
 working from the published description of the method and under the direction
 of the authors, who reviewed the work and are responsible for its correctness
 and maintenance: the first version was drafted with **Claude Sonnet 5**, the
-audit and the preparation for Bioconductor with **Claude Opus 5**, and the
-changes from the Bioconductor review with **Claude Fable 5.1**.
+audit and the preparation for Bioconductor with **Claude Opus 5**, the
+changes from the Bioconductor review with **Claude Fable 5.1**, and the
+resolution of `FLJ23867` to `QSOX1` (0.99.9) with **Claude Opus 5.5**.
 
 Concretely, of the code in this repository: `R/containers.R` and everything
 under `data-raw/` were written by the model; `R/brs.R` and the test suite

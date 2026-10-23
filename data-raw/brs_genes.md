@@ -43,14 +43,27 @@ it from the publisher or from PMC if you want to re-check the transcription.
    quoting.
 3. **Symbol resolution** against `org.Hs.eg.db` — see `check_symbols.R` in
    this directory. Four symbols are stale (`ARNTL`→`BMAL1`,
-   `FAM176A`→`EVA1A`, `PVRL4`→`NECTIN4`, `TM7SF4`→`DCSTAMP`); `FLJ23867`
-   resolves to nothing and is excluded from the signature.
+   `FAM176A`→`EVA1A`, `PVRL4`→`NECTIN4`, `TM7SF4`→`DCSTAMP`). `FLJ23867`
+   is neither a symbol nor an alias there: it is a cDNA clone name whose
+   NCBI Gene record (200058, 1q25.2) was withdrawn in September 2018 and
+   merged into `QSOX1` (5768), which lists it among its clone names.
+   `check_symbols.R` records the merge and checks that 5768 is still
+   `QSOX1`. In 2014 FLJ23867 was still a Gene ID of its own, so the
+   published row may have measured a transcript at that locus rather than
+   the whole of `QSOX1`: `QSOX1` is the closest current gene, not
+   necessarily the same feature. It behaves like the rest of block 2
+   (`validate_tcga.R` prints these): higher in BRAF-V600E than in RAS
+   tumors (log2 difference 1.41; other block-2 genes 0.56 to 6.68), and
+   Spearman 0.705 with the axis built from the other signature genes
+   (other block-2 genes 0.43 to 0.88, median 0.697). On GSE33630 it loads
+   on PC1 with its block's sign. Versions up to 0.99.8 left it out and
+   used 70 genes.
 
 4. **Re-derivation from the data.** The procedure of Extended Experimental
    Procedures 14.1 was re-run on TCGA-THCA — see `derive_signature.R` and
    `signature_rederivation.md`. Across 200 iterations only ~260 of 16,000-23,000
-   genes ever reach a top 100, and 68 of the 70 usable published genes are
-   among them at a median selection frequency of 93-97%. On a 2014-like
+   genes ever reach a top 100, and 69 of the 71 published genes are
+   among them at a median selection frequency of 92.5-97%. On a 2014-like
    protein-coding universe the strict criterion keeps 27 genes of which 26 are
    published, and the one exception was not an annotated gene in 2014.
 

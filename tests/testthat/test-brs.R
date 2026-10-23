@@ -1,3 +1,7 @@
+# Assisted-by: Claude Sonnet 5, Claude Opus 5, Claude Fable 5.1 and Claude
+# Opus 5.5 (Anthropic).
+# See the Provenance section of README.md.
+
 make_synthetic_cohort <- function(n_genes = 20, n_braf = 30, n_ras = 30,
                                   n_unlabeled = 10, seed = 1) {
     set.seed(seed)
@@ -32,12 +36,9 @@ make_synthetic_cohort <- function(n_genes = 20, n_braf = 30, n_ras = 30,
 
 test_that("brs_genes has the expected shape", {
     expect_equal(nrow(brs_genes), 71)
-    expect_equal(sum(is.na(brs_genes$current_symbol)), 1)
-    expect_equal(
-        brs_genes$original_symbol[is.na(brs_genes$current_symbol)],
-        "FLJ23867"
-    )
+    expect_false(anyNA(brs_genes$current_symbol))
     expect_false(anyDuplicated(brs_genes$original_symbol) > 0)
+    expect_false(anyDuplicated(brs_genes$current_symbol) > 0)
 })
 
 test_that("brs_genes records the two blocks of Figure S7A", {
@@ -56,6 +57,8 @@ test_that("stale symbols are resolved, ARNTL included", {
     expect_equal(unname(map[["PVRL4"]]), "NECTIN4")
     expect_equal(unname(map[["FAM176A"]]), "EVA1A")
     expect_equal(unname(map[["TM7SF4"]]), "DCSTAMP")
+    # Clone name, not an alias: NCBI Gene 200058 merged into 5768.
+    expect_equal(unname(map[["FLJ23867"]]), "QSOX1")
 })
 
 test_that("brs_fit recovers reference labels with high concordance", {
@@ -437,15 +440,15 @@ test_that("the signature resolves against either annotation vintage", {
             dimnames = list(rn, paste0("S", seq_len(40)))
         )
     }
-    modern <- na.omit(brs_genes$current_symbol) # BMAL1, NECTIN4
-    v36 <- brs_genes$original_symbol[!is.na(brs_genes$current_symbol)]
+    modern <- brs_genes$current_symbol # BMAL1, NECTIN4, QSOX1
+    published <- brs_genes$original_symbol # ARNTL, PVRL4, FLJ23867
 
     # GENCODE v36 has ARNTL/PVRL4; current annotation has BMAL1/NECTIN4. All
-    # 70 genes must resolve in either case, and in a mixed matrix.
-    expect_length(brs_fit(mk(modern), lab)$genes_used, 70L)
-    expect_length(brs_fit(mk(v36), lab)$genes_used, 70L)
-    mixed <- mk(c(head(modern, 35), tail(v36, 35)))
-    expect_length(brs_fit(mixed, lab)$genes_used, 70L)
+    # 71 genes must resolve under either spelling, and in a mixed matrix.
+    expect_length(brs_fit(mk(modern), lab)$genes_used, 71L)
+    expect_length(brs_fit(mk(published), lab)$genes_used, 71L)
+    mixed <- mk(c(head(modern, 35), tail(published, 36)))
+    expect_length(brs_fit(mixed, lab)$genes_used, 71L)
 })
 
 ## ---- container support -------------------------------------------------
@@ -664,8 +667,8 @@ test_that("a gene with a missing value is not called zero-variance", {
 
 test_that("predict resolves the other symbol spelling", {
     set.seed(2)
-    v36 <- brs_genes$original_symbol[!is.na(brs_genes$current_symbol)]
-    modern <- na.omit(brs_genes$current_symbol)
+    v36 <- brs_genes$original_symbol
+    modern <- brs_genes$current_symbol
     samples <- paste0("S", seq_len(40))
     labels <- setNames(rep(c("BRAF_V600E", "RAS"), each = 20), samples)
     mk <- function(rn) {
@@ -751,7 +754,7 @@ test_that("predict.brs_fit refuses an object that is not a brs_fit", {
 
 test_that("duplicated rows are caught under the other symbol spelling", {
     set.seed(3)
-    genes <- na.omit(brs_genes$current_symbol)
+    genes <- brs_genes$current_symbol
     samples <- paste0("S", seq_len(12))
     expr <- matrix(rnorm(length(genes) * 12), nrow = length(genes),
                    dimnames = list(genes, samples))

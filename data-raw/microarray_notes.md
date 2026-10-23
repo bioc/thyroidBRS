@@ -9,14 +9,14 @@ ground truth on the array side; the checks below are therefore internal.
 
 ## The signature is intact on the platform
 
-All 70 usable signature genes are present. Across the 49 papillary tumors:
+All 71 signature genes are present. Across the 49 papillary tumors:
 
 | | |
 | --- | --- |
-| Variance of the signature explained by PC1 | 46.2% |
-| Genes whose PC1 loading sign matches their Figure S7A block | 68 / 70 |
+| Variance of the signature explained by PC1 | 46.1% |
+| Genes whose PC1 loading sign matches their Figure S7A block | 69 / 71 |
 | Mean correlation within block 1 | +0.415 |
-| Mean correlation within block 2 | +0.419 |
+| Mean correlation within block 2 | +0.418 |
 | Mean correlation between blocks | -0.383 |
 
 Every figure in this table comes from the matrix `data-raw/build_inputs.R`
@@ -47,8 +47,8 @@ comparing each to the array's own signature axis (PC1, oriented like the BRS):
 | Standardization of the array data | Spearman vs. PC1 | Classes called |
 | --- | --- | --- |
 | Reference (TCGA per-gene mean/SD, what the package does) | +0.972 | 49 BRAF / 0 RAS |
-| Cohort-internal (re-standardize against GSE33630) | +0.981 | 42 BRAF / 7 RAS |
-| Within-sample ranks, then standardized | +0.917 | 45 BRAF / 4 RAS |
+| Cohort-internal (re-standardize against GSE33630) | +0.982 | 42 BRAF / 7 RAS |
+| Within-sample ranks, then standardized | +0.918 | 45 BRAF / 4 RAS |
 
 Every option ranks the tumors nearly identically. They disagree completely on
 where zero falls, and that is the whole class call.
@@ -61,8 +61,8 @@ subsets of different composition against the same centroids:
 
 | Cohort scored | n | Reference z-score | Cohort-internal |
 | --- | --- | --- | --- |
-| All published (272 Braf / 119 Ras) | 391 | 99.0% | 97.4% |
-| Only Braf-like | 272 | 99.6% | 85.7% |
+| All published (272 Braf / 119 Ras) | 391 | 98.7% | 97.7% |
+| Only Braf-like | 272 | 99.3% | 85.7% |
 | Only Ras-like | 119 | 97.5% | **8.4%** |
 | Skewed 90/10 | 200 | 99.5% | 97.0% |
 | Balanced 50/50 | 238 | 98.3% | 86.1% |
