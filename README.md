@@ -2,7 +2,8 @@
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/camilasauria/thyroidBRS/actions/workflows/check.yaml/badge.svg)](https://github.com/camilasauria/thyroidBRS/actions/workflows/check.yaml)
-[![Bioconductor build](https://bioconductor.org/shields/build/devel/bioc/thyroidBRS.svg)](https://bioconductor.org/checkResults/devel/bioc-LATEST/thyroidBRS/)
+[![Bioconductor release build](https://bioconductor.org/shields/build/release/bioc/thyroidBRS.svg)](https://bioconductor.org/checkResults/release/bioc-LATEST/thyroidBRS/)
+[![Bioconductor devel build](https://bioconductor.org/shields/build/devel/bioc/thyroidBRS.svg)](https://bioconductor.org/checkResults/devel/bioc-LATEST/thyroidBRS/)
 [![Bioconductor years](https://bioconductor.org/shields/years-in-bioc/thyroidBRS.svg)](https://bioconductor.org/packages/thyroidBRS)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23271086.svg)](https://doi.org/10.5281/zenodo.23271086)
 <!-- badges: end -->
@@ -54,18 +55,22 @@ the cohort changes.
 
 ## Installation
 
-`thyroidBRS` was accepted into Bioconductor in October 2026 and is in the
-development branch (devel), which requires the current R:
+`thyroidBRS` has been part of Bioconductor since release 3.24. Install it with
+`BiocManager`:
 
 ```r
 # install.packages("BiocManager")
+BiocManager::install("thyroidBRS")
+```
+
+The development version (Bioconductor devel) installs with
+
+```r
 BiocManager::install(version = "devel")
 BiocManager::install("thyroidBRS")
 ```
 
-From the next Bioconductor release on, the release version installs with
-`BiocManager::install("thyroidBRS")` alone. To track the GitHub repository
-directly:
+To track the GitHub repository directly:
 
 ```r
 # install.packages("remotes")
