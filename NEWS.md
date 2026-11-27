@@ -1,3 +1,12 @@
+# thyroidBRS 1.1.1
+
+* The README installs from Bioconductor release, keeps the devel route as an
+  option and shows the build status of both branches.
+
+# thyroidBRS 1.0.0
+
+* First Bioconductor release (3.24). Same code as 0.99.9.
+
 # thyroidBRS 0.99.9
 
 * `FLJ23867` now resolves to `QSOX1`, and the classifier uses all 71 genes of

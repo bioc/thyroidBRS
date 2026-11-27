@@ -24,6 +24,10 @@ jobs:
           - {os: ubuntu-latest,  r: 'release'}
           - {os: macos-latest,   r: 'release'}
           - {os: windows-latest, r: 'release'}
+          # DESCRIPTION promises R >= 4.5, and neither the Bioconductor
+          # builders nor the other jobs run it, so this one keeps the promise
+          # honest. Raise the floor in DESCRIPTION when this job is dropped.
+          - {os: ubuntu-latest,  r: 'oldrel-1'}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -54,30 +58,44 @@ jobs:
           upload-snapshots: true
           build_args: 'c("--no-manual")'
 
-  bioccheck:
+  # main is what Bioconductor builds as devel, so check and BiocCheck it
+  # where devel is built: in the official image, which follows Bioconductor
+  # onto R-devel when the cycle requires it. A BiocCheck on R release would
+  # read the odd y of a devel version (1.1.z) as a release one and fail.
+  devel:
     runs-on: ubuntu-latest
-    name: BiocCheck
+    name: Bioc devel (docker) + BiocCheck
+    container: bioconductor/bioconductor_docker:devel
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       - uses: actions/checkout@v4
-      - uses: r-lib/actions/setup-pandoc@v2
-      - uses: r-lib/actions/setup-r@v2
-        with:
-          r-version: 'release'
-          use-public-rspm: true
 
-      - uses: r-lib/actions/setup-r-dependencies@v2
-        with:
-          extra-packages: bioc::BiocCheck
-          needs: check
+      - name: Install dependencies
+        run: |
+          d <- read.dcf("DESCRIPTION")
+          fields <- intersect(c("Depends", "Imports", "LinkingTo", "Suggests"), colnames(d))
+          deps <- unlist(lapply(d[1, fields], function(x)
+              trimws(sub("\\(.*", "", strsplit(x, ",")[[1]]))))
+          deps <- setdiff(deps[nzchar(deps)],
+                          c("R", rownames(installed.packages(priority = "base"))))
+          BiocManager::install(c(deps, "BiocCheck", "rcmdcheck"),
+                               ask = FALSE, update = FALSE)
+        shell: Rscript {0}
 
       # BiocCheck wants the built tarball, not the source directory.
-      - name: Build tarball
+      - name: R CMD build
         run: R CMD build .
         shell: bash
+
+      - name: R CMD check
+        run: |
+          tarball <- list.files(pattern = "[.]tar[.]gz$")[1]
+          rcmdcheck::rcmdcheck(tarball, args = "--no-manual",
+                               error_on = "warning")
+        shell: Rscript {0}
 
       # `no-check-bioc-help` skips the maintainer's support-site and
       # mailing-list registration. That is a property of an account, not of
